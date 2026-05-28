@@ -1,0 +1,10 @@
+# Firebase config — keep this off GitHub
+firebase-config.js
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log
+node_modules/
+
+admin.html

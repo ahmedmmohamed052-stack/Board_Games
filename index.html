@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BoardZone — Join the Arena</title>
+<meta name="description" content="Sign in or create your BoardZone account to join board game tournaments, compete with players, and claim your glory.">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg-dark:         #0B0F19;
+  --card-bg:         rgba(18, 23, 34, 0.7);
+  --card-border:     rgba(255, 255, 255, 0.08);
+  --text-main:       #F3F4F6;
+  --text-muted:      #9CA3AF;
+  --accent-primary:  #8B5CF6;
+  --accent-secondary:#06B6D4;
+  --accent-glow:     rgba(139, 92, 246, 0.5);
+  --success:         #10B981;
+  --danger:          #EF4444;
+}
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Background radial gradients ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    radial-gradient(ellipse at 18% 50%,  rgba(139, 92, 246, 0.18) 0%, transparent 52%),
+    radial-gradient(ellipse at 82% 18%,  rgba(6, 182, 212, 0.12)  0%, transparent 52%),
+    radial-gradient(ellipse at 50% 100%, rgba(139, 92, 246, 0.12) 0%, transparent 52%),
+    radial-gradient(ellipse at 90% 80%,  rgba(6, 182, 212, 0.07)  0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+/* Grid overlay */
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: .5;
+  pointer-events: none; z-index: 0;
+}
+
+/* ── Floating blobs ── */
+.blob { position: fixed; border-radius: 50%; filter: blur(100px); animation: drift 20s ease-in-out infinite alternate; z-index: 0; pointer-events: none; }
+.b1 { width: 520px; height: 520px; background: rgba(139, 92, 246, 0.13); top: -130px; left: -110px; animation-delay: 0s; }
+.b2 { width: 420px; height: 420px; background: rgba(6, 182, 212, 0.1);   bottom: -160px; right: -100px; animation-delay: -6s; }
+.b3 { width: 320px; height: 320px; background: rgba(139, 92, 246, 0.07); top: 40%; left: 55%; animation-delay: -12s; }
+@keyframes drift {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(40px, -40px) scale(1.1); }
+  100% { transform: translate(-30px, 30px) scale(0.95); }
+}
+
+/* ── Wrap ── */
+.wrap {
+  position: relative; z-index: 10;
+  width: 100%; max-width: 432px;
+  padding: 24px;
+}
+
+/* ── Top badge ── */
+.badge {
+  text-align: center;
+  margin-bottom: 26px;
+}
+.badge span {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(139, 92, 246, 0.1);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  border-radius: 100px;
+  padding: 7px 18px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .72rem; font-weight: 700;
+  color: var(--accent-primary);
+  letter-spacing: .1em; text-transform: uppercase;
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.18);
+  animation: pulseBadge 3s ease-in-out infinite;
+}
+@keyframes pulseBadge {
+  0%, 100% { box-shadow: 0 0 20px rgba(139,92,246,.18); }
+  50%       { box-shadow: 0 0 35px rgba(139,92,246,.35); }
+}
+
+/* ── Card ── */
+.card {
+  background: var(--card-bg);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--card-border);
+  border-radius: 28px;
+  padding: 42px 36px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.6),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+/* Gradient shimmer on top edge */
+.card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(139,92,246,.5) 30%, rgba(6,182,212,.5) 70%, transparent 100%);
+}
+/* Subtle inner glow */
+.card::after {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0%, rgba(139,92,246,.06) 0%, transparent 65%);
+}
+
+/* ── Logo ── */
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2.9rem; font-weight: 800;
+  text-align: center; color: var(--text-main);
+  line-height: 1; margin-bottom: 8px;
+  letter-spacing: -.025em;
+  position: relative; z-index: 1;
+}
+.logo em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent-secondary), var(--accent-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Animated dice icon */
+.dice-icon {
+  display: block; text-align: center;
+  font-size: 2.6rem; margin-bottom: 14px;
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 14px rgba(139, 92, 246, 0.4));
+  position: relative; z-index: 1;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50%       { transform: translateY(-9px) rotate(3deg); }
+}
+
+.tagline {
+  text-align: center; color: var(--text-muted);
+  font-size: .86rem; margin-bottom: 34px;
+  font-weight: 400; letter-spacing: .03em;
+  position: relative; z-index: 1;
+}
+
+/* ── Tabs ── */
+.tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 16px; padding: 4px; gap: 4px;
+  margin-bottom: 28px;
+  border: 1px solid var(--card-border);
+  position: relative; z-index: 1;
+}
+.tab {
+  flex: 1; padding: 11px;
+  border: none; border-radius: 12px;
+  background: transparent;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .86rem; font-weight: 600;
+  color: var(--text-muted); cursor: pointer;
+  transition: all .3s ease; letter-spacing: .03em;
+}
+.tab.active {
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--text-main); font-weight: 700;
+  box-shadow: 0 4px 14px rgba(0,0,0,.25),
+              0 0 0 1px rgba(139,92,246,.15);
+}
+.tab:hover:not(.active) { color: var(--text-main); }
+
+/* ── Panels ── */
+.panel { display: none; position: relative; z-index: 1; }
+.panel.active { display: block; animation: fadeIn .3s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Fields ── */
+.field { margin-bottom: 18px; position: relative; }
+.field label {
+  display: block;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .72rem; font-weight: 700;
+  color: var(--text-muted); margin-bottom: 8px;
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.field input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--card-border);
+  border-radius: 13px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem; color: var(--text-main);
+  background: rgba(0, 0, 0, 0.25);
+  outline: none; transition: all .3s ease;
+}
+.field input::placeholder { color: rgba(255,255,255,.2); }
+.field input:focus {
+  border-color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.22),
+              0 4px 16px rgba(0,0,0,.3);
+}
+.field input:focus + .field-glow { opacity: 1; }
+
+/* ── Button ── */
+.btn {
+  width: 100%; padding: 15px;
+  border: none; border-radius: 14px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .96rem; font-weight: 700;
+  cursor: pointer; margin-top: 8px;
+  transition: all .3s ease;
+  background: linear-gradient(135deg, var(--accent-primary), #6D28D9);
+  color: #fff;
+  box-shadow: 0 4px 24px var(--accent-glow);
+  letter-spacing: .04em;
+  position: relative; overflow: hidden;
+}
+/* Shine layer */
+.btn::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 50%);
+  pointer-events: none;
+}
+/* Shimmer sweep on hover */
+.btn::after {
+  content: '';
+  position: absolute;
+  top: -50%; left: -75%;
+  width: 50%; height: 200%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent);
+  transform: skewX(-20deg);
+  transition: left .5s ease;
+}
+.btn:hover::after { left: 125%; }
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 36px rgba(139, 92, 246, 0.65);
+  filter: brightness(1.08);
+}
+.btn:active { transform: translateY(0); }
+
+/* ── Message ── */
+.msg {
+  margin-top: 16px; padding: 12px 16px;
+  border-radius: 12px; font-size: .85rem;
+  text-align: center; display: none;
+  font-weight: 500; line-height: 1.5;
+}
+.msg.error   { background: rgba(239,68,68,.1);  color: var(--danger);  border: 1px solid rgba(239,68,68,.25); }
+.msg.success { background: rgba(16,185,129,.1); color: var(--success); border: 1px solid rgba(16,185,129,.25); }
+</style>
+</head>
+<body>
+
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+
+<div class="wrap">
+  <div class="badge"><span>🎲 Board Game Tournaments &amp; Events</span></div>
+
+  <div class="card">
+    <span class="dice-icon">🎲</span>
+    <div class="logo">Board<em>Zone</em></div>
+    <p class="tagline">Where strategy meets the table</p>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('login')">Sign In</button>
+      <button class="tab"        onclick="switchTab('reg')">Sign Up</button>
+    </div>
+
+    <!-- Login -->
+    <div id="login-panel" class="panel active">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="l-email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="l-pass" placeholder="••••••••">
+      </div>
+      <button class="btn" onclick="doLogin()">Enter the Arena →</button>
+      <div id="l-msg" class="msg"></div>
+    </div>
+
+    <!-- Register -->
+    <div id="reg-panel" class="panel">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="r-email" placeholder="you@example.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="r-pass" placeholder="Minimum 6 characters">
+      </div>
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" id="r-confirm" placeholder="Same as above">
+      </div>
+      <button class="btn" onclick="doRegister()">Create Account →</button>
+      <div id="r-msg" class="msg"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script>
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(user => {
+  if (user && user.emailVerified) window.location.href = 'home.html';
+});
+
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach((b, i) =>
+    b.classList.toggle('active', (t === 'login' && i === 0) || (t === 'reg' && i === 1))
+  );
+  document.getElementById('login-panel').classList.toggle('active', t === 'login');
+  document.getElementById('reg-panel').classList.toggle('active', t === 'reg');
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  el.textContent = text;
+  el.className   = 'msg ' + type;
+  el.style.display = 'block';
+}
+
+async function doLogin() {
+  const email = document.getElementById('l-email').value.trim();
+  const pass  = document.getElementById('l-pass').value;
+  if (!email || !pass) return showMsg('l-msg', 'Please fill in all fields.', 'error');
+  try {
+    const cred = await auth.signInWithEmailAndPassword(email, pass);
+    if (!cred.user.emailVerified) {
+      await auth.signOut();
+      return showMsg('l-msg', '📧 Please verify your email first! Check your inbox.', 'error');
+    }
+    window.location.href = 'home.html';
+  } catch(e) { showMsg('l-msg', e.message, 'error'); }
+}
+
+async function doRegister() {
+  const email   = document.getElementById('r-email').value.trim();
+  const pass    = document.getElementById('r-pass').value;
+  const confirm = document.getElementById('r-confirm').value;
+  if (!email || !pass || !confirm) return showMsg('r-msg', 'Please fill in all fields.', 'error');
+  if (pass !== confirm)            return showMsg('r-msg', '❌ Passwords do not match!', 'error');
+  if (pass.length < 6)             return showMsg('r-msg', '🔑 Password needs 6+ characters.', 'error');
+  try {
+    const cred = await auth.createUserWithEmailAndPassword(email, pass);
+    await cred.user.sendEmailVerification();
+    showMsg('r-msg', '✅ Account created! Check your inbox to verify your email before signing in.', 'success');
+  } catch(e) { showMsg('r-msg', e.message, 'error'); }
+}
+</script>
+</body>
+</html>
